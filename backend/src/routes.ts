@@ -49,7 +49,7 @@ router.get("/", (req: Request, res: Response) => {
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/User'
+ *             $ref: '#/components/schemas/UserInput'
  *     responses:
  *       201:
  *         description: User registered successfully

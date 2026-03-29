@@ -12,7 +12,7 @@ export function setupDocs(app: Application) {
     info: {
       title: "Rubber Ducks API",
       version: "1.0.0",
-      description: "API documentation for the Rubber Ducks project",
+      description: "API documentation for QuackSnap project",
     },
     servers: [
       {
@@ -35,21 +35,34 @@ export function setupDocs(app: Application) {
             name: { type: "string" },
             description: { type: "string" },
             imageUrl: { type: "string" },
-            color: { type: "string" },
-            theme: { type: "string" },
-            size: { type: "number" },
-            price: { type: "number" },
-            inStock: { type: "boolean" },
-            isOnDiscount: { type: "boolean" },
-            discountPercentage: { type: "number" },
-            isHidden: { type: "boolean" },
+            rating: { type: "number" },
+            comments: {
+              type: "array",
+              items: { type: "string" },
+            },
+          },
+        },
+        UserInput: {
+          type: "object",
+          required: ["fullName", "userName", "email", "password"],
+          properties: {
+            fullName: { type: "string", description: "User's full name" },
+            userName: { type: "string", description: "User's unique username" },
+            email: {
+              type: "string",
+              format: "email",
+              description: "User's email address",
+            },
+            password: { type: "string", description: "User's password" },
           },
         },
         User: {
           type: "object",
+          required: ["fullName", "email", "password"],
           properties: {
             id: { type: "string" },
-            name: { type: "string" },
+            fullName: { type: "string" },
+            userName: { type: "string" },
             email: { type: "string" },
             password: { type: "string" },
             registerDate: { type: "string" },

@@ -3,7 +3,7 @@ import dotenvFlow from "dotenv-flow";
 import { faker } from "@faker-js/faker";
 
 // Project import
-import { RubberDuckModel } from "../src/models/rubberDuckModel";
+import { RubberDuckModel } from "../src/models/duckModel";
 import { UserModel } from "../src/models/userModel";
 import { connect, disconnect } from "../src/repository/database";
 
@@ -46,13 +46,13 @@ export async function seedData() {
   const passwordHash = await bcrypt.hash("12345678", salt);
 
   const user1 = new UserModel();
-  user1.name = faker.person.fullName();
+  user1.fullName = faker.person.fullName();
   user1.email = faker.internet.email();
   user1.password = passwordHash;
   await user1.save();
 
   const user2 = new UserModel();
-  user2.name = faker.person.fullName();
+  user2.fullName = faker.person.fullName();
   user2.email = faker.internet.email();
   user2.password = passwordHash;
   await user2.save();

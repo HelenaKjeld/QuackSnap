@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { RubberDuckModel } from "../models/rubberDuckModel";
+import { RubberDuckModel } from "../models/duckModel";
 import { connect, disconnect } from "../repository/database";
 import { buildDynamicQuery } from "./dynamicueryBuilder";
 

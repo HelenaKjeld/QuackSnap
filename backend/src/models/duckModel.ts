@@ -1,18 +1,12 @@
 import { Schema, model } from "mongoose";
-import { RubberDuck } from "../interfaces/rubberducks";
+import { DuckPost } from "../interfaces/duckpost";
 
-const duckSchema = new Schema<RubberDuck>({
+const duckSchema = new Schema<DuckPost>({
   name: { type: String, required: true, min: 3, max: 255 },
   description: { type: String, required: true, min: 3, max: 1024 },
   imageUrl: { type: String, required: true, min: 3, max: 1024 },
-  color: { type: String, required: true, min: 3, max: 255 },
-  theme: { type: String, required: true, min: 3, max: 255 },
-  size: { type: Number, required: true, min: 1, max: 100 },
-  price: { type: Number, required: true, min: 0 },
-  inStock: { type: Boolean, required: true, default: true },
-  isOnDiscount: { type: Boolean, required: true, default: false },
-  discountPercentage: { type: Number, required: true, default: 0 },
-  isHidden: { type: Boolean, required: false },
+  rating: { type: Number, required: true, min: 0, max: 5 },
+  comments: { type: [String], default: [] },
   _createdBy: { type: String, ref: "User", required: true },
 });
 
@@ -43,4 +37,4 @@ duckSchema.pre("findOneAndUpdate", function <T extends Document>(this: any) {
   update.$inc.__v = 1;
 });
 
-export const RubberDuckModel = model<RubberDuck>("RubberDuck", duckSchema);
+export const RubberDuckModel = model<DuckPost>("DuckPost", duckSchema);

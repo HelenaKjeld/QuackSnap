@@ -36,6 +36,7 @@ export async function registerUser(req: Request, res: Response): Promise<void> {
 
     const userObject = new UserModel({
       name: req.body.name,
+      userName: req.body.userName,
       email: req.body.email,
       password: hashedPassword,
     });
@@ -87,7 +88,7 @@ export async function loginUser(req: Request, res: Response): Promise<void> {
       const userId: string = user.id;
       const token: string = jwt.sign(
         {
-          name: user.name,
+          name: user.fullName,
           email: user.email,
           id: userId,
         },
@@ -137,12 +138,13 @@ export async function verifyToken(
 }
 
 /**
- * Validates the user registration data (name, email, password)
+ * Validates the user registration data (name, userName, email, password)
  * @param data
  */
 export function validateUserRegistration(data: User): ValidationResult {
   const schema = Joi.object({
     name: Joi.string().min(3).max(255).required(),
+    userName: Joi.string().min(3).max(255).required(),
     email: Joi.string().email().min(5).max(255).required(),
     password: Joi.string().min(6).max(30).required(),
   });
