@@ -31,7 +31,7 @@ const router: Router = Router();
 
 router.get("/", (req: Request, res: Response) => {
   // connect
-  res.status(200).send("Welcome to the MENTS API");
+  res.status(200).send("Welcome to the QuackSnap");
   // disconnect
 });
 
