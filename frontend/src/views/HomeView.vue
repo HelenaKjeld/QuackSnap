@@ -11,67 +11,24 @@ function onLogout() {
 
 <template>
   <main>
-    <section class="actions">
-      <RouterLink v-if="!isLoggedIn" class="register-button" to="/register">Go To Register Form</RouterLink>
-      <RouterLink v-if="!isLoggedIn" class="login-button" to="/login">Go To Login Form</RouterLink>
-      <div v-if="isLoggedIn" class="session-box">
+    <section class="mt-5 flex flex-wrap items-center gap-3">
+      <RouterLink v-if="!isLoggedIn"
+        class="inline-block rounded-lg bg-blue-600 px-4 py-3 font-bold text-white no-underline transition hover:opacity-90"
+        to="/register">
+        Register
+      </RouterLink>
+      <RouterLink v-if="!isLoggedIn"
+        class="inline-block rounded-lg bg-teal-700 px-4 py-3 font-bold text-white no-underline transition hover:opacity-90"
+        to="/login">
+        Login 
+      </RouterLink>
+      <div v-if="isLoggedIn" class="flex items-center gap-3">
         Logged in as: <strong>{{ currentUserName }}</strong>
-        <button class="logout-button" type="button" @click="onLogout">Logout</button>
+        <button class="cursor-pointer rounded-lg bg-red-600 px-3 py-2 font-bold text-white" type="button"
+          @click="onLogout">
+          Logout
+        </button>
       </div>
     </section>
   </main>
 </template>
-
-<style scoped>
-.actions {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  flex-wrap: wrap;
-  margin-top: 1.2rem;
-}
-
-.register-button {
-  display: inline-block;
-  border-radius: 8px;
-  padding: 0.7rem 1rem;
-  background: #2563eb;
-  color: #fff;
-  font-weight: 700;
-  text-decoration: none;
-}
-
-.login-button {
-  display: inline-block;
-  border-radius: 8px;
-  padding: 0.7rem 1rem;
-  background: #0f766e;
-  color: #fff;
-  font-weight: 700;
-  text-decoration: none;
-}
-
-.register-button:hover {
-  opacity: 0.9;
-}
-
-.login-button:hover {
-  opacity: 0.9;
-}
-
-.session-box {
-  display: flex;
-  gap: 0.7rem;
-  align-items: center;
-}
-
-.logout-button {
-  border: 0;
-  border-radius: 8px;
-  padding: 0.4rem 0.8rem;
-  background: #dc2626;
-  color: #fff;
-  font-weight: 700;
-  cursor: pointer;
-}
-</style>
