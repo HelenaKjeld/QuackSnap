@@ -3,7 +3,7 @@ import dotenvFlow from "dotenv-flow";
 import { faker } from "@faker-js/faker";
 
 // Project import
-import { RubberDuckModel } from "../src/models/duckModel";
+import { DuckPostModel } from "../src/models/duckModel";
 import { UserModel } from "../src/models/userModel";
 import { connect, disconnect } from "../src/repository/database";
 
@@ -31,7 +31,7 @@ export async function seed() {
  * Delete all data from the database
  */
 export async function deleteAllData() {
-  await RubberDuckModel.deleteMany();
+  await DuckPostModel.deleteMany();
   await UserModel.deleteMany();
 
   console.log("Cleared data successfully...");
@@ -69,18 +69,12 @@ export async function seedData() {
   ];
 
   for (let index = 0; index < 10; index++) {
-    await new RubberDuckModel({
+    await new DuckPostModel({
       name: faker.commerce.productName(),
       description: faker.commerce.productDescription(),
       imageUrl: "https://picsum.photos/500/500",
-      color: colors[Math.floor(Math.random() * colors.length)],
-      theme: themes[Math.floor(Math.random() * themes.length)],
-      size: faker.number.int({ min: 1, max: 100 }),
-      price: faker.commerce.price({ min: 5, max: 5000 }),
-      inStock: faker.datatype.boolean(0.8),
-      isOnDiscount: faker.datatype.boolean(0.5),
-      discountPercentage: faker.number.int({ min: 0, max: 100 }),
-      isHidden: false,
+      rating: faker.number.int({ min: 1, max: 5 }),
+      comments: [],
       _createdBy: user1.id,
     }).save();
   }

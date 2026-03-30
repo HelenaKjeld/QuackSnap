@@ -10,7 +10,7 @@ export function setupDocs(app: Application) {
   const swaggerDefinition = {
     openapi: "3.0.0",
     info: {
-      title: "Rubber Ducks API",
+      title: "QrackSnap API",
       version: "1.0.0",
       description: "API documentation for QuackSnap project",
     },

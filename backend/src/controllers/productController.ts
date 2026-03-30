@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { RubberDuckModel } from "../models/duckModel";
+import { DuckPostModel } from "../models/duckModel";
 import { connect, disconnect } from "../repository/database";
 import { buildDynamicQuery } from "./dynamicueryBuilder";
 
@@ -16,7 +16,7 @@ export async function createDucks(req: Request, res: Response): Promise<void> {
   try {
     await connect();
 
-    const product = new RubberDuckModel(data);
+    const product = new DuckPostModel(data);
     const result = await product.save();
 
     res.status(201).json(result);
@@ -38,7 +38,7 @@ export async function getAllDucks(req: Request, res: Response): Promise<void> {
   try {
     await connect();
 
-    const result = await RubberDuckModel.find({});
+    const result = await DuckPostModel.find({});
 
     res.status(200).json(result);
   } catch (err) {
@@ -49,20 +49,20 @@ export async function getAllDucks(req: Request, res: Response): Promise<void> {
 }
 
 /**
- * Retrieves a DUCK by ID from the database
+ * Retrieves a DuckPost by ID from the database
  * @param req
  * @param res
  */
-export async function getDuckById(req: Request, res: Response): Promise<void> {
+export async function getDuckPostById(req: Request, res: Response): Promise<void> {
   try {
     await connect();
 
     const id = req.params.id;
-    const result = await RubberDuckModel.findById({ _id: id });
+    const result = await DuckPostModel.findById({ _id: id });
 
     res.status(200).json(result);
   } catch (err) {
-    res.status(500).json("error retrieving product by id." + err);
+    res.status(500).json("error retrieving DuckPost by id." + err);
   } finally {
     await disconnect();
   }
@@ -73,7 +73,7 @@ export async function getDuckById(req: Request, res: Response): Promise<void> {
  * @param req
  * @param res
  */
-export async function updateDuckById(
+export async function updateDuckPostById(
   req: Request,
   res: Response,
 ): Promise<void> {
@@ -82,7 +82,7 @@ export async function updateDuckById(
   try {
     await connect();
 
-    const result = await RubberDuckModel.findByIdAndUpdate(id, req.body);
+    const result = await DuckPostModel.findByIdAndUpdate(id, req.body);
     if (!result) {
       res.status(404).send("can nott update Duke with the id=" + id);
     } else {
@@ -96,11 +96,11 @@ export async function updateDuckById(
 }
 
 /**
- * Delete a DUCK by ID from the database
+ * Delete a DuckPost by ID from the database
  * @param req
  * @param res
  */
-export async function deleteDuckById(
+export async function deleteDuckPostById(
   req: Request,
   res: Response,
 ): Promise<void> {
@@ -109,14 +109,14 @@ export async function deleteDuckById(
   try {
     await connect();
 
-    const result = await RubberDuckModel.findByIdAndDelete(id);
+    const result = await DuckPostModel.findByIdAndDelete(id);
     if (!result) {
-      res.status(404).send("can not delete Duke with the id=" + id);
+      res.status(404).send("can not delete DuckPost with the id=" + id);
     } else {
-      res.status(200).send("product was deleted successfully.");
+      res.status(200).send("DuckPost was deleted successfully.");
     }
   } catch (err) {
-    res.status(500).json("error deleting the DUCK product by id." + err);
+    res.status(500).json("error deleting the DuckPost by id." + err);
   } finally {
     await disconnect();
   }
@@ -127,7 +127,7 @@ export async function deleteDuckById(
  * @param req
  * @param res
  */
-export async function getDucksByQuery(
+export async function getDuckPostsByQuery(
   req: Request,
   res: Response,
 ): Promise<void> {
@@ -139,24 +139,24 @@ export async function getDucksByQuery(
     const key: any = req.params.key;
     const value: any = req.params.value;
 
-    const result = await RubberDuckModel.find({
+    const result = await DuckPostModel.find({
       [key]: { $regex: value, $options: "i" },
     });
 
     res.status(200).json(result);
   } catch (err) {
-    res.status(500).json("error retrieving product by id." + err);
+    res.status(500).json("error retrieving DuckPost by id." + err);
   } finally {
     await disconnect();
   }
 }
 
 /**
- * Retrieves a DUCK by query from the database
+ * Retrieves a DuckPost by query from the database
  * @param req
  * @param res
  */
-export async function getDucksByQueryGeneric(
+export async function getDuckPostsByQueryGeneric(
   req: Request,
   res: Response,
 ): Promise<void> {
@@ -167,13 +167,13 @@ export async function getDucksByQueryGeneric(
 
     const body = req.body;
 
-    const result = await RubberDuckModel.find(
-      buildDynamicQuery(RubberDuckModel, body),
+    const result = await DuckPostModel.find(
+      buildDynamicQuery(DuckPostModel, body),
     );
 
     res.status(200).json(result);
   } catch (err) {
-    res.status(500).json("error retrieving product by id." + err);
+    res.status(500).json("error retrieving DuckPost by id." + err);
   } finally {
     await disconnect();
   }

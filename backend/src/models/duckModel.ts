@@ -37,4 +37,4 @@ duckSchema.pre("findOneAndUpdate", function <T extends Document>(this: any) {
   update.$inc.__v = 1;
 });
 
-export const RubberDuckModel = model<DuckPost>("DuckPost", duckSchema);
+export const DuckPostModel = model<DuckPost>("DuckPost", duckSchema);
