@@ -1,20 +1,23 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuth } from '@/stores/auth'
 
-type RegisterPayload = {
-    fullName: string
-    userName: string
+type LoginPayload = {
     email: string
     password: string
 }
 
-type RegisterErrorResponse = {
-    error?: string
+type LoginResponse = {
+    error: string | null
+    data?: {
+        userId: string
+        userName?: string
+        token: string
+    }
 }
 
-const form = ref<RegisterPayload>({
-    fullName: '',
-    userName: '',
+const form = ref<LoginPayload>({
     email: '',
     password: '',
 })
@@ -23,13 +26,16 @@ const loading = ref(false)
 const successMessage = ref('')
 const errorMessage = ref('')
 
+const router = useRouter()
+const { setAuthSession } = useAuth()
+
 async function onSubmit() {
     loading.value = true
     successMessage.value = ''
     errorMessage.value = ''
 
     try {
-        const response = await fetch('http://localhost:4000/api/user/register', {
+        const response = await fetch('http://localhost:4000/api/user/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -37,27 +43,21 @@ async function onSubmit() {
             body: JSON.stringify(form.value),
         })
 
-        const responseText = await response.text()
-        let data: RegisterErrorResponse | null = null
+        const data = (await response.json()) as LoginResponse
 
-        try {
-            data = responseText ? (JSON.parse(responseText) as RegisterErrorResponse) : null
-        } catch {
-            data = null
-        }
-
-        if (!response.ok) {
-            errorMessage.value = data?.error ?? responseText ?? 'Registration failed. Please try again.'
+        if (!response.ok || !data.data?.token || !data.data.userId) {
+            errorMessage.value = data?.error ?? 'Login failed. Please check your email and password.'
             return
         }
 
-        successMessage.value = 'User registered successfully.'
-        form.value = {
-            fullName: '',
-            userName: '',
-            email: '',
-            password: '',
-        }
+        setAuthSession({
+            userId: data.data.userId,
+            userName: data.data.userName ?? form.value.email,
+            token: data.data.token,
+        })
+
+        successMessage.value = 'Login successful.'
+        await router.push('/')
     } catch {
         errorMessage.value = 'Could not connect to backend. Make sure the API is running on port 4000.'
     } finally {
@@ -67,22 +67,12 @@ async function onSubmit() {
 </script>
 
 <template>
-    <main class="register-view">
+    <main class="login-view">
         <section class="card">
-            <h1>Create account</h1>
-            <p class="subtitle">Register a new QuackSnap user and send it directly to your backend.</p>
+            <h1>Log in</h1>
+            <p class="subtitle">Sign in to see your user name and manage your session.</p>
 
             <form class="form" @submit.prevent="onSubmit">
-                <label>
-                    Full Name
-                    <input v-model="form.fullName" type="text" required minlength="3" maxlength="255" />
-                </label>
-
-                <label>
-                    Username
-                    <input v-model="form.userName" type="text" required minlength="3" maxlength="255" />
-                </label>
-
                 <label>
                     Email
                     <input v-model="form.email" type="email" required />
@@ -94,7 +84,7 @@ async function onSubmit() {
                 </label>
 
                 <button :disabled="loading" type="submit">
-                    {{ loading ? 'Registering...' : 'Register User' }}
+                    {{ loading ? 'Logging in...' : 'Login' }}
                 </button>
             </form>
 
@@ -105,7 +95,7 @@ async function onSubmit() {
 </template>
 
 <style scoped>
-.register-view {
+.login-view {
     display: grid;
     place-items: center;
     padding: 2rem 1rem;
@@ -148,7 +138,7 @@ button {
     border-radius: 8px;
     padding: 0.7rem 1rem;
     font-weight: 700;
-    background: #2563eb;
+    background: #0f766e;
     color: #ffffff;
     cursor: pointer;
 }

@@ -109,6 +109,8 @@ router.post("/user/register", registerUser);
  *                   properties:
  *                     userId:
  *                       type: string
+ *                     userName:
+ *                       type: string
  *                     token:
  *                       type: string
  *       400:

@@ -31,11 +31,19 @@ export async function registerUser(req: Request, res: Response): Promise<void> {
       return;
     }
 
+    const userNameExists = await UserModel.findOne({
+      userName: req.body.userName,
+    });
+    if (userNameExists) {
+      res.status(400).json({ error: "Username already exists." });
+      return;
+    }
+
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
     const userObject = new UserModel({
-      name: req.body.name,
+      fullName: req.body.fullName,
       userName: req.body.userName,
       email: req.body.email,
       password: hashedPassword,
@@ -100,7 +108,10 @@ export async function loginUser(req: Request, res: Response): Promise<void> {
       res
         .status(200)
         .header("auth-token", token)
-        .json({ error: null, data: { userId, token } });
+        .json({
+          error: null,
+          data: { userId, userName: user.userName, token },
+        });
     }
   } catch (error) {
     res
@@ -138,12 +149,12 @@ export async function verifyToken(
 }
 
 /**
- * Validates the user registration data (name, userName, email, password)
+ * Validates the user registration data (fullName, userName, email, password)
  * @param data
  */
 export function validateUserRegistration(data: User): ValidationResult {
   const schema = Joi.object({
-    name: Joi.string().min(3).max(255).required(),
+    fullName: Joi.string().min(3).max(255).required(),
     userName: Joi.string().min(3).max(255).required(),
     email: Joi.string().email().min(5).max(255).required(),
     password: Joi.string().min(6).max(30).required(),
