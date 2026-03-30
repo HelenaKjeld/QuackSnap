@@ -123,10 +123,10 @@ router.post("/user/login", loginUser);
 // create
 /**
  * @swagger
- * /products:
+ * /post:
  *   post:
  *     tags:
- *       - Product Routes
+ *       - Post Routes
  *     summary: Create a new DUCK post
  *     description: Creates a new DUCK post in the database. Requires an auth token.
  *     security:
@@ -141,22 +141,22 @@ router.post("/user/login", loginUser);
  *       201:
  *         description: DUCK post created successfully
  *       400:
- *         description: Invalid request body
+ *         description: Invalid request body 
  *       401:
  *         description: Missing or invalid auth token
  *       500:
  *         description: Server error
  */
 
-router.post("/products", verifyToken, createDucks);
+router.post("/posts", verifyToken, createDucks);
 
 // gets all
 /**
  * @swagger
- * /products:
+ * /post:
  *   get:
  *     tags:
- *       - Product Routes
+ *       - Post Routes
  *     summary: Get all DUCK posts
  *     description: Retrieves all DUCK posts from the database.
  *     responses:
@@ -171,19 +171,19 @@ router.post("/products", verifyToken, createDucks);
  *       500:
  *         description: Server error
  */
-router.get("/products", getAllDucks);
+router.get("/posts", getAllDucks);
 
 // get by id
-router.get("/products/:id", getDuckPostById);
+router.get("/posts/:id", getDuckPostById);
 
-router.post("/products/query", getDuckPostsByQueryGeneric);
+router.post("/posts/query", getDuckPostsByQueryGeneric);
 
-router.post("/products/:key/:value", getDuckPostsByQuery);
+router.post("/posts/:key/:value", getDuckPostsByQuery);
 
 // update
-router.put("/products/:id", verifyToken, updateDuckPostById);
+router.put("/posts/:id", verifyToken, updateDuckPostById);
 
 // delete
-router.delete("/products/:id", verifyToken, deleteDuckPostById);
+router.delete("/posts/:id", verifyToken, deleteDuckPostById);
 
 export default router;
