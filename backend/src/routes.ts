@@ -123,8 +123,99 @@ router.post("/user/register", registerUser);
  */
 router.post("/user/login", loginUser);
 
+/**
+ * @swagger
+ * /user/me:
+ *   get:
+ *     tags:
+ *       - User Routes
+ *     summary: Get current user profile
+ *     description: Retrieves the profile of the currently authenticated user.
+ *     security:
+ *       - ApiKeyAuth: []
+ *     responses:
+ *       200:
+ *         description: User profile fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   nullable: true
+ *                 data:
+ *                   $ref: '#/components/schemas/User'
+ *       401:
+ *         description: Unauthorized - Missing or invalid token
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
+ */
 router.get("/user/me", verifyToken, getMyProfile);
+
+/**
+ * @swagger
+ * /user/me:
+ *   put:
+ *     tags:
+ *       - User Routes
+ *     summary: Update current user profile
+ *     description: Updates full name, username, email, and optionally password for the authenticated user.
+ *     security:
+ *       - ApiKeyAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               fullName:
+ *                 type: string
+ *               userName:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               password:
+ *                 type: string
+ *                 description: Optional new password
+ *     responses:
+ *       200:
+ *         description: Profile updated successfully
+ *       400:
+ *         description: Validation failed or email/username already exists
+ *       401:
+ *         description: Unauthorized - Missing or invalid token
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
+ */
 router.put("/user/me", verifyToken, updateMyProfile);
+
+/**
+ * @swagger
+ * /user/me:
+ *   delete:
+ *     tags:
+ *       - User Routes
+ *     summary: Delete current user account
+ *     description: Permanently deletes the authenticated user's account.
+ *     security:
+ *       - ApiKeyAuth: []
+ *     responses:
+ *       200:
+ *         description: User deleted successfully
+ *       401:
+ *         description: Unauthorized - Missing or invalid token
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
+ */
 router.delete("/user/me", verifyToken, deleteMyProfile);
 
 // create
