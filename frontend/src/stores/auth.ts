@@ -38,12 +38,27 @@ function clearAuthSession(): void {
   window.localStorage.removeItem(STORAGE_KEY)
 }
 
+function setCurrentUserName(userName: string): void {
+  if (!authSession.value) {
+    return
+  }
+
+  const updated = {
+    ...authSession.value,
+    userName,
+  }
+
+  authSession.value = updated
+  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(updated))
+}
+
 export function useAuth() {
   return {
     authSession,
     isLoggedIn: computed(() => authSession.value !== null),
     currentUserName: computed(() => authSession.value?.userName ?? ''),
     setAuthSession,
+    setCurrentUserName,
     clearAuthSession,
   }
 }

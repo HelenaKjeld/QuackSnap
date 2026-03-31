@@ -141,10 +141,161 @@ export async function verifyToken(
   }
 
   try {
-    if (token) jwt.verify(token, process.env.TOKEN_SECRET as string);
+    const decoded = jwt.verify(token, process.env.TOKEN_SECRET as string) as {
+      id?: string;
+    };
+
+    if (!decoded?.id) {
+      res.status(401).json({ error: "Invalid token payload." });
+      return;
+    }
+
+    res.locals.userId = decoded.id;
     next();
   } catch (error) {
     res.status(401).send({ error: "Invalid token." });
+  }
+}
+
+/**
+ * Get the currently authenticated user's profile.
+ */
+export async function getMyProfile(req: Request, res: Response): Promise<void> {
+  try {
+    const userId = res.locals.userId as string | undefined;
+    if (!userId) {
+      res.status(401).json({ error: "Could not resolve authenticated user." });
+      return;
+    }
+
+    await connect();
+
+    const user = await UserModel.findById(userId).select(
+      "fullName userName email registerDate",
+    );
+    if (!user) {
+      res.status(404).json({ error: "User not found." });
+      return;
+    }
+
+    res.status(200).json({ error: null, data: user });
+  } catch (error) {
+    res.status(500).json({ error: "An error occurred while loading profile." });
+  } finally {
+    await disconnect();
+  }
+}
+
+/**
+ * Update the currently authenticated user's profile.
+ */
+export async function updateMyProfile(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  try {
+    const userId = res.locals.userId as string | undefined;
+    if (!userId) {
+      res.status(401).json({ error: "Could not resolve authenticated user." });
+      return;
+    }
+
+    const { error } = validateUserProfileUpdate(req.body);
+    if (error) {
+      res.status(400).json({ error: error.details[0].message });
+      return;
+    }
+
+    await connect();
+
+    const currentUser = await UserModel.findById(userId);
+    if (!currentUser) {
+      res.status(404).json({ error: "User not found." });
+      return;
+    }
+
+    if (req.body.email && req.body.email !== currentUser.email) {
+      const emailExists = await UserModel.findOne({
+        email: req.body.email,
+        _id: { $ne: userId },
+      });
+      if (emailExists) {
+        res.status(400).json({ error: "Email already exists." });
+        return;
+      }
+      currentUser.email = req.body.email;
+    }
+
+    if (req.body.userName && req.body.userName !== currentUser.userName) {
+      const userNameExists = await UserModel.findOne({
+        userName: req.body.userName,
+        _id: { $ne: userId },
+      });
+      if (userNameExists) {
+        res.status(400).json({ error: "Username already exists." });
+        return;
+      }
+      currentUser.userName = req.body.userName;
+    }
+
+    if (req.body.fullName) {
+      currentUser.fullName = req.body.fullName;
+    }
+
+    if (req.body.password) {
+      const salt = await bcrypt.genSalt(10);
+      currentUser.password = await bcrypt.hash(req.body.password, salt);
+    }
+
+    await currentUser.save();
+
+    res.status(200).json({
+      error: null,
+      data: {
+        id: currentUser.id,
+        fullName: currentUser.fullName,
+        userName: currentUser.userName,
+        email: currentUser.email,
+      },
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "An error occurred while updating profile." });
+  } finally {
+    await disconnect();
+  }
+}
+
+/**
+ * Delete the currently authenticated user's account.
+ */
+export async function deleteMyProfile(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  try {
+    const userId = res.locals.userId as string | undefined;
+    if (!userId) {
+      res.status(401).json({ error: "Could not resolve authenticated user." });
+      return;
+    }
+
+    await connect();
+
+    const deletedUser = await UserModel.findByIdAndDelete(userId);
+    if (!deletedUser) {
+      res.status(404).json({ error: "User not found." });
+      return;
+    }
+
+    res.status(200).json({ error: null, data: "User deleted successfully." });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "An error occurred while deleting profile." });
+  } finally {
+    await disconnect();
   }
 }
 
@@ -172,6 +323,22 @@ export function validateUserLoginInfo(data: User): ValidationResult {
     email: Joi.string().email().min(5).max(255).required(),
     password: Joi.string().min(6).max(30).required(),
   });
+
+  return schema.validate(data);
+}
+
+/**
+ * Validates profile update payload.
+ */
+export function validateUserProfileUpdate(
+  data: Partial<User>,
+): ValidationResult {
+  const schema = Joi.object({
+    fullName: Joi.string().min(3).max(255),
+    userName: Joi.string().min(3).max(255),
+    email: Joi.string().email().min(5).max(255),
+    password: Joi.string().min(6).max(30),
+  }).min(1);
 
   return schema.validate(data);
 }

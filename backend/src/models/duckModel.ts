@@ -5,9 +5,9 @@ const duckSchema = new Schema<DuckPost>({
   name: { type: String, required: true, min: 3, max: 255 },
   description: { type: String, required: true, min: 3, max: 1024 },
   imageUrl: { type: String, required: true, min: 3, max: 1024 },
-  rating: { type: Number, required: true, min: 0, max: 5 },
+  rating: { type: Number, required: true, min: 0, max: 5, default: 0 },
   comments: { type: [String], default: [] },
-  _createdBy: { type: String, ref: "User", required: true },
+  _createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
 });
 
 type UpdateQuery<T> = {

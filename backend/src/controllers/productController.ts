@@ -14,6 +14,11 @@ export async function createDucks(req: Request, res: Response): Promise<void> {
   const data = req.body;
 
   try {
+    if (!data._createdBy) {
+      res.status(400).json({ error: "_createdBy is required." });
+      return;
+    }
+
     await connect();
 
     const product = new DuckPostModel(data);
@@ -38,7 +43,9 @@ export async function getAllDucks(req: Request, res: Response): Promise<void> {
   try {
     await connect();
 
-    const result = await DuckPostModel.find({});
+    const result = await DuckPostModel.find({})
+      .sort({ _id: -1 })
+      .populate("_createdBy", "userName fullName");
 
     res.status(200).json(result);
   } catch (err) {
@@ -53,7 +60,10 @@ export async function getAllDucks(req: Request, res: Response): Promise<void> {
  * @param req
  * @param res
  */
-export async function getDuckPostById(req: Request, res: Response): Promise<void> {
+export async function getDuckPostById(
+  req: Request,
+  res: Response,
+): Promise<void> {
   try {
     await connect();
 

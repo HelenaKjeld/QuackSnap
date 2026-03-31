@@ -24,6 +24,7 @@ function onLogout() {
         <RouterLink to="/about">About</RouterLink>
         <RouterLink v-if="!isLoggedIn" to="/register">Register</RouterLink>
         <RouterLink v-if="!isLoggedIn" to="/login">Login</RouterLink>
+        <RouterLink v-if="isLoggedIn" to="/profile">Profile</RouterLink>
         <span v-if="isLoggedIn" class="user-badge">{{ currentUserName }}</span>
         <button v-if="isLoggedIn" class="logout-button" type="button" @click="onLogout">Logout</button>
       </nav>

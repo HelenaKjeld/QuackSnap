@@ -29,7 +29,7 @@ export function setupDocs(app: Application) {
         },
       },
       schemas: {
-        RubberDuck: {
+        DuckPost: {
           type: "object",
           properties: {
             name: { type: "string" },

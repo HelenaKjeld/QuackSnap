@@ -9,8 +9,11 @@ import {
   getDuckPostsByQueryGeneric,
 } from "./controllers/productController";
 import {
+  deleteMyProfile,
+  getMyProfile,
   loginUser,
   registerUser,
+  updateMyProfile,
   verifyToken,
 } from "./controllers/authController";
 
@@ -120,6 +123,10 @@ router.post("/user/register", registerUser);
  */
 router.post("/user/login", loginUser);
 
+router.get("/user/me", verifyToken, getMyProfile);
+router.put("/user/me", verifyToken, updateMyProfile);
+router.delete("/user/me", verifyToken, deleteMyProfile);
+
 // create
 /**
  * @swagger
@@ -141,7 +148,7 @@ router.post("/user/login", loginUser);
  *       201:
  *         description: DUCK post created successfully
  *       400:
- *         description: Invalid request body 
+ *         description: Invalid request body
  *       401:
  *         description: Missing or invalid auth token
  *       500:

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useAuth } from '@/stores/auth'
 
 type LoginPayload = {
@@ -27,6 +27,7 @@ const successMessage = ref('')
 const errorMessage = ref('')
 
 const router = useRouter()
+const route = useRoute()
 const { setAuthSession } = useAuth()
 
 async function onSubmit() {
@@ -57,7 +58,8 @@ async function onSubmit() {
         })
 
         successMessage.value = 'Login successful.'
-        await router.push('/')
+        const redirectPath = typeof route.query.redirect === 'string' ? route.query.redirect : '/'
+        await router.push(redirectPath)
     } catch {
         errorMessage.value = 'Could not connect to backend. Make sure the API is running on port 4000.'
     } finally {
