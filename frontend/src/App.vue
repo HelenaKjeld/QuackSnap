@@ -19,14 +19,15 @@ function onLogout() {
     <div class="wrapper">
       <HelloWorld msg="You did it!" />
 
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-        <RouterLink v-if="!isLoggedIn" to="/register">Register</RouterLink>
-        <RouterLink v-if="!isLoggedIn" to="/login">Login</RouterLink>
-        <RouterLink v-if="isLoggedIn" to="/profile">Profile</RouterLink>
-        <span v-if="isLoggedIn" class="user-badge">{{ currentUserName }}</span>
-        <button v-if="isLoggedIn" class="logout-button" type="button" @click="onLogout">Logout</button>
+      <nav data-testid="nav">
+        <RouterLink to="/" data-testid="nav-home">Home</RouterLink>
+        <RouterLink to="/about" data-testid="nav-about">About</RouterLink>
+        <RouterLink v-if="!isLoggedIn" to="/register" data-testid="nav-register">Register</RouterLink>
+        <RouterLink v-if="!isLoggedIn" to="/login" data-testid="nav-login">Login</RouterLink>
+        <RouterLink v-if="isLoggedIn" to="/profile" data-testid="nav-profile">Profile</RouterLink>
+        <span v-if="isLoggedIn" class="user-badge" data-testid="nav-user-name">{{ currentUserName }}</span>
+        <button v-if="isLoggedIn" class="logout-button" type="button" data-testid="nav-logout"
+          @click="onLogout">Logout</button>
       </nav>
     </div>
   </header>

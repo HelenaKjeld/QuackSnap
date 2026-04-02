@@ -75,24 +75,24 @@ async function onSubmit() {
             <p class="mb-4 text-[color:var(--color-text)] opacity-80">Sign in to see your user name and manage your
                 session.</p>
 
-            <form class="grid gap-4" @submit.prevent="onSubmit">
+            <form class="grid gap-4" data-testid="login-form" @submit.prevent="onSubmit">
                 <label class="grid gap-1.5 font-semibold">
                     Email
                     <input v-model="form.email"
                         class="rounded-lg border border-[var(--color-border)] bg-transparent px-3 py-2 text-[color:var(--color-text)]"
-                        type="email" required />
+                        type="email" required data-testid="login-email" />
                 </label>
 
                 <label class="grid gap-1.5 font-semibold">
                     Password
                     <input v-model="form.password"
                         class="rounded-lg border border-[var(--color-border)] bg-transparent px-3 py-2 text-[color:var(--color-text)]"
-                        type="password" required minlength="6" maxlength="30" />
+                        type="password" required minlength="6" maxlength="30" data-testid="login-password" />
                 </label>
 
                 <button :disabled="loading"
                     class="cursor-pointer rounded-lg bg-teal-700 px-4 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-70"
-                    type="submit">
+                    type="submit" data-testid="login-submit">
                     {{ loading ? 'Logging in...' : 'Login' }}
                 </button>
             </form>
