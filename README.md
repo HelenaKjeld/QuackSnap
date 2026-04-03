@@ -20,3 +20,46 @@ On startup, the app runs a connect + ping + disconnect to verify the DB connecti
 After the server starts, open:
 
 http://localhost:4000/api/docs
+
+
+### Rendur backend
+
+Build Command
+Render runs this command to build your app before each deploy.
+
+```
+npm install && npm run build
+```
+
+Start Command
+Render runs this command to start your app with each deploy.
+
+```
+node dist/src/index.js
+```
+
+Health Check Path
+Provide an HTTP endpoint path that Render messages periodically to monitor your service. 
+
+/api/
+
+### Rendur frontend
+
+Build Command
+Render runs this command to build your app before each deploy.
+
+```
+npm install && npm run build
+```
+
+Start Command
+Render runs this command to start your app with each deploy.
+
+```
+dist
+```
+
+Health Check Path
+Provide an HTTP endpoint path that Render messages periodically to monitor your service. 
+
+/api/

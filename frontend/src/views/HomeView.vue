@@ -18,6 +18,7 @@ type PostItem = {
 }
 
 const { isLoggedIn, currentUserName, clearAuthSession, authSession } = useAuth()
+const API_BASE = import.meta.env.VITE_API_URL
 
 const posts = ref<PostItem[]>([])
 const postsLoading = ref(false)
@@ -49,7 +50,7 @@ async function loadPosts() {
   postsError.value = ''
 
   try {
-    const response = await fetch('http://localhost:4000/api/posts')
+    const response = await fetch(`${API_BASE}/api/posts`)
     if (!response.ok) {
       postsError.value = 'Could not load posts.'
       return
@@ -90,7 +91,7 @@ async function onCreatePost() {
   createPostSuccess.value = ''
 
   try {
-    const response = await fetch('http://localhost:4000/api/posts', {
+    const response = await fetch(`${API_BASE}/api/posts`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

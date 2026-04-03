@@ -29,6 +29,7 @@ const errorMessage = ref('')
 const router = useRouter()
 const route = useRoute()
 const { setAuthSession } = useAuth()
+const API_BASE = import.meta.env.VITE_API_URL
 
 async function onSubmit() {
     loading.value = true
@@ -36,7 +37,7 @@ async function onSubmit() {
     errorMessage.value = ''
 
     try {
-        const response = await fetch('http://localhost:4000/api/user/login', {
+        const response = await fetch(`${API_BASE}/api/user/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -61,7 +62,7 @@ async function onSubmit() {
         const redirectPath = typeof route.query.redirect === 'string' ? route.query.redirect : '/'
         await router.push(redirectPath)
     } catch {
-        errorMessage.value = 'Could not connect to backend. Make sure the API is running on port 4000.'
+        errorMessage.value = 'Could not connect to backend. Make sure the API is running.'
     } finally {
         loading.value = false
     }
