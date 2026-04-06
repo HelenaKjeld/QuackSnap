@@ -23,6 +23,14 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
+      - name: Install backend
+        run: npm ci
+        working-directory: ./backend
+
+      - name: Install frontend
+        run: npm ci
+        working-directory: ./frontend
+
       - name: Build backend
         run: npm run build
         working-directory: ./backend
