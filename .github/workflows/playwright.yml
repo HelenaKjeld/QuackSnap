@@ -11,8 +11,8 @@ jobs:
     env:
       DBHOST: ${{ secrets.DBHOST }}
       TOKEN_SECRET: ${{ secrets.TOKEN_SECRET }}
-      VITE_API_URL: ${{ secrets.VITE_API_URL }}
-      FRONTEND_ORIGIN: ${{ secrets.FRONTEND_ORIGIN }}
+      VITE_API_URL: ${{ vars.VITE_API_URL }}
+      FRONTEND_ORIGIN: ${{ vars.FRONTEND_ORIGIN }}
     defaults:
       run:
         working-directory: playwright
