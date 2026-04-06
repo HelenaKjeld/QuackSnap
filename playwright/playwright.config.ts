@@ -1,3 +1,5 @@
+/// <reference types="node" />
+
 import { defineConfig, devices } from "@playwright/test";
 
 /**
@@ -79,7 +81,7 @@ export default defineConfig({
   webServer: [
     {
       cwd: "../backend",
-      command: "npm run start-dev",
+      command: "npx ts-node ./mongodbPing.ts && npm run start-dev",
       url: "http://localhost:4000/api",
       timeout: 120 * 1000,
     },
