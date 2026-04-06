@@ -8,6 +8,11 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    env:
+      DBHOST: ${{ secrets.DBHOST }}
+      TOKEN_SECRET: ${{ secrets.TOKEN_SECRET }}
+      VITE_API_URL: ${{ secrets.VITE_API_URL }}
+      FRONTEND_ORIGIN: ${{ secrets.FRONTEND_ORIGIN }}
     defaults:
       run:
         working-directory: playwright
