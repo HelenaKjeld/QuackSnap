@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { RouterLink } from 'vue-router'
 import { useAuth } from '@/stores/auth'
 
 type PostCreator = {
@@ -17,8 +16,8 @@ type PostItem = {
   _createdBy: string | PostCreator
 }
 
-const { isLoggedIn, currentUserName, clearAuthSession, authSession } = useAuth()
-const API_BASE = import.meta.env.VITE_API_URL
+const { isLoggedIn, authSession } = useAuth()
+const API_BASE = (import.meta.env.VITE_API_URL ?? 'http://localhost:4000').replace(/\/$/, '')
 
 const posts = ref<PostItem[]>([])
 const postsLoading = ref(false)
@@ -27,14 +26,15 @@ const postsError = ref('')
 const creatingPost = ref(false)
 const createPostError = ref('')
 const createPostSuccess = ref('')
+const isCreatePostOpen = ref(false)
 const form = ref({
   name: '',
   description: '',
   imageUrl: '',
 })
 
-function onLogout() {
-  clearAuthSession()
+function toggleCreatePost() {
+  isCreatePostOpen.value = !isCreatePostOpen.value
 }
 
 function creatorName(post: PostItem): string {
@@ -127,62 +127,70 @@ onMounted(() => {
 </script>
 
 <template>
-  <main class="space-y-6">
-    <section class="mt-5 flex flex-wrap items-center gap-3" data-testid="home-status">
-      <div v-if="isLoggedIn" class="flex items-center gap-3" data-testid="home-logged-in">
-        Logged in as: <strong data-testid="home-user-name">{{ currentUserName }}</strong>
-        <button class="cursor-pointer rounded-lg bg-red-600 px-3 py-2 font-bold text-white" type="button"
-          data-testid="home-logout" @click="onLogout">
-          Logout
-        </button>
-      </div>
-    </section>
+  <main class="space-y-8">
+    <section v-if="isLoggedIn" class="mx-auto grid w-full max-w-3xl justify-items-center">
+      <button type="button"
+        class="cursor-pointer rounded-xl border border-white/20 bg-[#154f30] px-5 py-3 font-bold text-white"
+        @click="toggleCreatePost">
+        {{ isCreatePostOpen ? 'Close Create Post' : 'Open Create Post' }}
+      </button>
 
-    <section v-if="isLoggedIn" class="max-w-2xl rounded-xl border border-[var(--color-border)] p-5">
-      <h2 class="text-2xl font-semibold">Create Post</h2>
-      <p class="mb-4 opacity-80">Add a name, description and image to create a post.</p>
+      <Transition enter-active-class="transition duration-300 ease-out"
+        enter-from-class="-translate-y-3 scale-[0.98] opacity-0" enter-to-class="translate-y-0 scale-100 opacity-100"
+        leave-active-class="transition duration-200 ease-in" leave-from-class="translate-y-0 scale-100 opacity-100"
+        leave-to-class="-translate-y-3 scale-[0.98] opacity-0">
+        <div v-if="isCreatePostOpen"
+          class="mt-3 w-full rounded-xl border border-white/20 bg-zinc-900/75 p-5 shadow-[0_12px_28px_rgba(10,20,35,0.35)]">
+          <h2 class="text-2xl font-semibold">Create Post</h2>
+          <p class="mb-4 opacity-80">Add a name, description and image to create a post.</p>
 
-      <form class="grid gap-4" @submit.prevent="onCreatePost">
-        <label class="grid gap-1.5 font-medium">
-          Post Name
-          <input v-model="form.name" class="rounded-lg border border-[var(--color-border)] bg-transparent px-3 py-2"
-            type="text" minlength="3" maxlength="255" required />
-        </label>
+          <form class="grid gap-4" @submit.prevent="onCreatePost">
+            <label class="grid gap-1.5 font-medium">
+              Post Name
+              <input v-model="form.name" class="rounded-lg border border-white/20 bg-black/20 px-3 py-2" type="text"
+                minlength="3" maxlength="255" required />
+            </label>
 
-        <label class="grid gap-1.5 font-medium">
-          Description
-          <textarea v-model="form.description"
-            class="min-h-28 rounded-lg border border-[var(--color-border)] bg-transparent px-3 py-2" minlength="3"
-            maxlength="1024" required />
-        </label>
+            <label class="grid gap-1.5 font-medium">
+              Description
+              <textarea v-model="form.description"
+                class="min-h-28 rounded-lg border border-white/20 bg-black/20 px-3 py-2" minlength="3" maxlength="1024"
+                required />
+            </label>
 
-        <label class="grid gap-1.5 font-medium">
-          Upload Image
-          <input class="rounded-lg border border-[var(--color-border)] px-3 py-2" type="file" accept="image/*"
-            @change="onImageSelect" required />
-        </label>
+            <label class="grid gap-1.5 font-medium">
+              Upload Image
+              <input class="rounded-lg border border-white/20 bg-black/20 px-3 py-2" type="file" accept="image/*"
+                @change="onImageSelect" required />
+            </label>
 
-        <img v-if="form.imageUrl" :src="form.imageUrl" alt="Preview" class="max-h-56 w-full rounded-lg object-cover" />
+            <img v-if="form.imageUrl" :src="form.imageUrl" alt="Preview"
+              class="max-h-56 w-full rounded-lg object-cover" />
 
-        <button :disabled="creatingPost"
-          class="cursor-pointer rounded-lg bg-indigo-600 px-4 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-70"
-          type="submit">
-          {{ creatingPost ? 'Creating...' : 'Create Post' }}
-        </button>
-      </form>
+            <button :disabled="creatingPost"
+              class="cursor-pointer rounded-lg bg-[#154f30] px-4 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-70"
+              type="submit">
+              {{ creatingPost ? 'Creating...' : 'Create Post' }}
+            </button>
+          </form>
 
-      <p v-if="createPostSuccess" class="mt-3 font-semibold text-green-600">{{ createPostSuccess }}</p>
-      <p v-if="createPostError" class="mt-3 font-semibold text-red-600">{{ createPostError }}</p>
+          <p v-if="createPostSuccess" class="mt-3 font-semibold text-green-600">{{ createPostSuccess }}</p>
+          <p v-if="createPostError" class="mt-3 font-semibold text-red-600">{{ createPostError }}</p>
+        </div>
+      </Transition>
     </section>
 
     <section class="space-y-3">
-      <h2 class="text-2xl font-semibold">Latest Posts</h2>
+      <h2 class="text-center text-3xl font-semibold md:text-4xl">Only the Finest Quacks</h2>
       <p v-if="postsLoading">Loading posts...</p>
       <p v-if="postsError" class="font-semibold text-red-600">{{ postsError }}</p>
+      <p v-else-if="!postsLoading && posts.length === 0" class="text-zinc-300">No posts yet. Be the first to create one.
+      </p>
 
-      <div v-if="!postsLoading && !postsError" class="grid gap-4">
-        <article v-for="post in posts" :key="post._id" class="rounded-xl border border-[var(--color-border)] p-4">
-          <img :src="post.imageUrl" :alt="post.name" class="mb-3 max-h-72 w-full rounded-lg object-cover" />
+      <div v-if="!postsLoading && !postsError" class="grid justify-items-center gap-4">
+        <article v-for="post in posts" :key="post._id"
+          class="w-[min(50vw,980px)] rounded-2xl border border-white/20 bg-[#030b07] p-4 shadow-[0_12px_28px_rgba(10,20,35,0.35)] max-md:w-[min(92vw,980px)]">
+          <img :src="post.imageUrl" :alt="post.name" class="mb-3 max-h-[55vh] w-full rounded-xl object-cover" />
           <h3 class="text-xl font-semibold">{{ post.name }}</h3>
           <p class="mb-2 opacity-90">{{ post.description }}</p>
           <p class="text-sm opacity-80">Created by: <strong>{{ creatorName(post) }}</strong></p>

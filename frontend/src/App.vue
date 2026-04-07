@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import { useRouter } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
 import { useAuth } from '@/stores/auth'
 
 const router = useRouter()
@@ -14,100 +13,45 @@ function onLogout() {
 </script>
 
 <template>
-  <header>
+  <div class="min-h-screen bg-[#06170e] text-zinc-100 antialiased">
+    <header class="sticky top-0 z-10 border-b border-white/15 bg-[#030b07]/70 backdrop-blur-md">
+      <div class="mx-auto max-w-[1200px] px-4 py-3">
+        <nav class="flex w-full flex-wrap items-center justify-center gap-1 text-[0.95rem] lg:gap-2 lg:text-base"
+          data-testid="nav">
+          <RouterLink
+            class="inline-block border-l border-white/15 px-4 py-1 text-zinc-300 no-underline transition hover:text-white first:border-l-0"
+            to="/" data-testid="nav-home">Home</RouterLink>
+          <RouterLink
+            class="inline-block border-l border-white/15 px-4 py-1 text-zinc-300 no-underline transition hover:text-white first:border-l-0"
+            to="/about" data-testid="nav-about">About</RouterLink>
+          <RouterLink v-if="!isLoggedIn"
+            class="inline-block border-l border-white/15 px-4 py-1 text-zinc-300 no-underline transition hover:text-white first:border-l-0"
+            to="/register" data-testid="nav-register">Register</RouterLink>
+          <RouterLink v-if="!isLoggedIn"
+            class="inline-block border-l border-white/15 px-4 py-1 text-zinc-300 no-underline transition hover:text-white first:border-l-0"
+            to="/login" data-testid="nav-login">Login</RouterLink>
+          <RouterLink v-if="isLoggedIn"
+            class="inline-block border-l border-white/15 px-4 py-1 text-zinc-300 no-underline transition hover:text-white first:border-l-0"
+            to="/profile" data-testid="nav-profile">Profile</RouterLink>
+          <span v-if="isLoggedIn"
+            class="ml-3 inline-block rounded-full bg-emerald-100 px-2 py-1 text-xs font-bold text-emerald-800"
+            data-testid="nav-user-name">
+            {{ currentUserName }}
+          </span>
+          <button v-if="isLoggedIn" class="ml-2 cursor-pointer rounded-lg bg-red-600 px-3 py-1 text-white" type="button"
+            data-testid="nav-logout" @click="onLogout">
+            Logout
+          </button>
+        </nav>
+      </div>
+    </header>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav data-testid="nav">
-        <RouterLink to="/" data-testid="nav-home">Home</RouterLink>
-        <RouterLink to="/about" data-testid="nav-about">About</RouterLink>
-        <RouterLink v-if="!isLoggedIn" to="/register" data-testid="nav-register">Register</RouterLink>
-        <RouterLink v-if="!isLoggedIn" to="/login" data-testid="nav-login">Login</RouterLink>
-        <RouterLink v-if="isLoggedIn" to="/profile" data-testid="nav-profile">Profile</RouterLink>
-        <span v-if="isLoggedIn" class="user-badge" data-testid="nav-user-name">{{ currentUserName }}</span>
-        <button v-if="isLoggedIn" class="logout-button" type="button" data-testid="nav-logout"
-          @click="onLogout">Logout</button>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+    <main class="mx-auto max-w-[1200px] p-4 text-zinc-100">
+      <RouterView />
+    </main>
+  </div>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-.user-badge {
-  display: inline-block;
-  margin-left: 1rem;
-  padding: 0.2rem 0.5rem;
-  border-radius: 999px;
-  background: #e0f2fe;
-  color: #075985;
-  font-size: 0.8rem;
-  font-weight: 700;
-}
-
-.logout-button {
-  margin-left: 0.6rem;
-  border: 0;
-  border-radius: 8px;
-  padding: 0.3rem 0.75rem;
-  background: #dc2626;
-  color: #fff;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-}
+<style>
+@import 'tailwindcss';
 </style>

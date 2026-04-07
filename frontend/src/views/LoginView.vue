@@ -29,7 +29,7 @@ const errorMessage = ref('')
 const router = useRouter()
 const route = useRoute()
 const { setAuthSession } = useAuth()
-const API_BASE = import.meta.env.VITE_API_URL
+const API_BASE = (import.meta.env.VITE_API_URL ?? 'http://localhost:4000').replace(/\/$/, '')
 
 async function onSubmit() {
     loading.value = true
@@ -71,28 +71,28 @@ async function onSubmit() {
 
 <template>
     <main class="grid place-items-center px-4 py-8">
-        <section class="w-full max-w-[520px] rounded-xl border border-[var(--color-border)] p-5">
+        <section class="w-full max-w-[520px] rounded-xl border border-white/20 bg-zinc-900/75 p-5">
             <h1 class="text-4xl">Log in</h1>
-            <p class="mb-4 text-[color:var(--color-text)] opacity-80">Sign in to see your user name and manage your
+            <p class="mb-4 text-zinc-300 opacity-80">Sign in to see your user name and manage your
                 session.</p>
 
             <form class="grid gap-4" data-testid="login-form" @submit.prevent="onSubmit">
                 <label class="grid gap-1.5 font-semibold">
                     Email
                     <input v-model="form.email"
-                        class="rounded-lg border border-[var(--color-border)] bg-transparent px-3 py-2 text-[color:var(--color-text)]"
-                        type="email" required data-testid="login-email" />
+                        class="rounded-lg border border-white/20 bg-black/20 px-3 py-2 text-zinc-100" type="email"
+                        required data-testid="login-email" />
                 </label>
 
                 <label class="grid gap-1.5 font-semibold">
                     Password
                     <input v-model="form.password"
-                        class="rounded-lg border border-[var(--color-border)] bg-transparent px-3 py-2 text-[color:var(--color-text)]"
-                        type="password" required minlength="6" maxlength="30" data-testid="login-password" />
+                        class="rounded-lg border border-white/20 bg-black/20 px-3 py-2 text-zinc-100" type="password"
+                        required minlength="6" maxlength="30" data-testid="login-password" />
                 </label>
 
                 <button :disabled="loading"
-                    class="cursor-pointer rounded-lg bg-teal-700 px-4 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-70"
+                    class="cursor-pointer rounded-lg bg-[#154f30] px-4 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-70"
                     type="submit" data-testid="login-submit">
                     {{ loading ? 'Logging in...' : 'Login' }}
                 </button>

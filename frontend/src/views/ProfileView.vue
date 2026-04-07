@@ -5,7 +5,7 @@ import { useAuth } from '@/stores/auth'
 
 const router = useRouter()
 const { authSession, currentUserName, setCurrentUserName, clearAuthSession } = useAuth()
-const API_BASE = (import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '')
+const API_BASE = (import.meta.env.VITE_API_URL ?? 'http://localhost:4000').replace(/\/$/, '')
 
 type ProfileResponse = {
     error: string | null
@@ -155,7 +155,7 @@ onMounted(() => {
 
 <template>
     <main class="grid place-items-center px-4 py-8">
-        <section class="w-full max-w-[560px] rounded-xl border border-[var(--color-border)] p-5">
+        <section class="w-full max-w-[560px] rounded-xl border border-white/20 bg-zinc-900/75 p-5">
             <h1 class="text-3xl font-semibold">Profile</h1>
             <p class="mb-5 mt-2 opacity-80">This page is only visible when you are logged in.</p>
 
@@ -164,35 +164,32 @@ onMounted(() => {
             <form v-if="!loading" class="grid gap-4" @submit.prevent="onSaveProfile">
                 <label class="grid gap-1.5 font-semibold">
                     Full name
-                    <input v-model="form.fullName"
-                        class="rounded-lg border border-[var(--color-border)] bg-transparent px-3 py-2" type="text"
-                        minlength="3" maxlength="255" required />
+                    <input v-model="form.fullName" class="rounded-lg border border-white/20 bg-black/20 px-3 py-2"
+                        type="text" minlength="3" maxlength="255" required />
                 </label>
 
                 <label class="grid gap-1.5 font-semibold">
                     Username
-                    <input v-model="form.userName"
-                        class="rounded-lg border border-[var(--color-border)] bg-transparent px-3 py-2" type="text"
-                        minlength="3" maxlength="255" required />
+                    <input v-model="form.userName" class="rounded-lg border border-white/20 bg-black/20 px-3 py-2"
+                        type="text" minlength="3" maxlength="255" required />
                 </label>
 
                 <label class="grid gap-1.5 font-semibold">
                     Email
-                    <input v-model="form.email"
-                        class="rounded-lg border border-[var(--color-border)] bg-transparent px-3 py-2" type="email"
-                        required />
+                    <input v-model="form.email" class="rounded-lg border border-white/20 bg-black/20 px-3 py-2"
+                        type="email" required />
                 </label>
 
                 <label class="grid gap-1.5 font-semibold">
                     New password (optional)
-                    <input v-model="form.password"
-                        class="rounded-lg border border-[var(--color-border)] bg-transparent px-3 py-2" type="password"
-                        minlength="6" maxlength="30" placeholder="Leave blank to keep current password" />
+                    <input v-model="form.password" class="rounded-lg border border-white/20 bg-black/20 px-3 py-2"
+                        type="password" minlength="6" maxlength="30"
+                        placeholder="Leave blank to keep current password" />
                 </label>
 
                 <div class="mt-2 flex flex-wrap gap-3">
                     <button :disabled="saving"
-                        class="cursor-pointer rounded-lg bg-blue-600 px-4 py-2 font-bold text-white disabled:cursor-not-allowed disabled:opacity-70"
+                        class="cursor-pointer rounded-lg bg-[#154f30] px-4 py-2 font-bold text-white disabled:cursor-not-allowed disabled:opacity-70"
                         type="submit">
                         {{ saving ? 'Saving...' : 'Save changes' }}
                     </button>
