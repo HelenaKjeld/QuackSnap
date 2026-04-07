@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useAuth } from '@/stores/auth'
+import { compressImage, getCompressionRatio } from '@/utils/imageCompressor'
 
 type PostCreator = {
   userName?: string
@@ -27,6 +28,8 @@ const creatingPost = ref(false)
 const createPostError = ref('')
 const createPostSuccess = ref('')
 const isCreatePostOpen = ref(false)
+const imageCompressing = ref(false)
+const compressionMessage = ref('')
 const form = ref({
   name: '',
   description: '',
@@ -73,11 +76,29 @@ async function onImageSelect(event: Event) {
     return
   }
 
-  const reader = new FileReader()
-  reader.onload = () => {
-    form.value.imageUrl = String(reader.result ?? '')
+  imageCompressing.value = true
+  compressionMessage.value = 'Compressing image...'
+
+  try {
+    // Compress with max size of 300KB
+    const compressedImageUrl = await compressImage(file, 1200, 1200, 300)
+    form.value.imageUrl = compressedImageUrl
+    compressionMessage.value = 'Image compressed successfully ✓'
+    setTimeout(() => {
+      compressionMessage.value = ''
+    }, 3000)
+  } catch (error) {
+    console.error('Image compression failed:', error)
+    compressionMessage.value = 'Failed to compress image, using original'
+    // Fallback to original image if compression fails
+    const reader = new FileReader()
+    reader.onload = () => {
+      form.value.imageUrl = String(reader.result ?? '')
+    }
+    reader.readAsDataURL(file)
+  } finally {
+    imageCompressing.value = false
   }
-  reader.readAsDataURL(file)
 }
 
 async function onCreatePost() {
@@ -160,9 +181,12 @@ onMounted(() => {
 
             <label class="grid gap-1.5 font-medium">
               Upload Image
-              <input class="rounded-lg border border-white/20 bg-black/20 px-3 py-2" type="file" accept="image/*"
-                @change="onImageSelect" required />
+              <input :disabled="imageCompressing"
+                class="rounded-lg border border-white/20 bg-black/20 px-3 py-2 disabled:cursor-not-allowed disabled:opacity-70"
+                type="file" accept="image/*" @change="onImageSelect" required />
             </label>
+
+            <p v-if="compressionMessage" class="text-sm font-semibold text-emerald-400">{{ compressionMessage }}</p>
 
             <img v-if="form.imageUrl" :src="form.imageUrl" alt="Preview"
               class="max-h-56 w-full rounded-lg object-cover" />

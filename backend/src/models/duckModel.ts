@@ -4,7 +4,7 @@ import { DuckPost } from "../interfaces/duckpost";
 const duckSchema = new Schema<DuckPost>({
   name: { type: String, required: true, min: 3, max: 255 },
   description: { type: String, required: true, min: 3, max: 1024 },
-  imageUrl: { type: String, required: true, min: 3, max: 1024 },
+  imageUrl: { type: String, required: true, min: 3 },
   rating: { type: Number, required: true, min: 0, max: 5, default: 0 },
   comments: { type: [String], default: [] },
   _createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
