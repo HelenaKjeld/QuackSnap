@@ -16,16 +16,36 @@ const app: Application = express();
  * Sets up CORS handling.
  */
 function setupCors() {
-  const rawOrigins = process.env.FRONTEND_ORIGIN!;
+  const rawOrigins = process.env.FRONTEND_ORIGIN ?? "";
+  const normalizeOrigin = (value: string): string =>
+    value.trim().replace(/\/+$/, "");
+
   const allowedOrigins = rawOrigins
     .split(",")
-    .map((origin) => origin.trim())
+    .map((origin) => normalizeOrigin(origin))
     .filter(Boolean);
+
+  if (allowedOrigins.length === 0) {
+    console.warn(
+      "[CORS] FRONTEND_ORIGIN is empty. Allowing all origins until it is configured.",
+    );
+  }
 
   app.use(
     cors({
       origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
+        if (!origin) {
+          callback(null, true);
+          return;
+        }
+
+        if (allowedOrigins.length === 0) {
+          callback(null, true);
+          return;
+        }
+
+        const normalizedOrigin = normalizeOrigin(origin);
+        if (allowedOrigins.includes(normalizedOrigin)) {
           callback(null, true);
           return;
         }

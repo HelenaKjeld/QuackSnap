@@ -5,6 +5,7 @@ import { useAuth } from '@/stores/auth'
 
 const router = useRouter()
 const { authSession, currentUserName, setCurrentUserName, clearAuthSession } = useAuth()
+const API_BASE = (import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '')
 
 type ProfileResponse = {
     error: string | null
@@ -44,7 +45,7 @@ async function loadProfile() {
     errorMessage.value = ''
 
     try {
-        const response = await fetch('http://localhost:4000/api/user/me', {
+        const response = await fetch(`${API_BASE}/api/user/me`, {
             headers: {
                 'auth-token': authSession.value.token,
             },
@@ -86,7 +87,7 @@ async function onSaveProfile() {
             payload.password = form.value.password.trim()
         }
 
-        const response = await fetch('http://localhost:4000/api/user/me', {
+        const response = await fetch(`${API_BASE}/api/user/me`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -125,7 +126,7 @@ async function onDeleteAccount() {
     errorMessage.value = ''
 
     try {
-        const response = await fetch('http://localhost:4000/api/user/me', {
+        const response = await fetch(`${API_BASE}/api/user/me`, {
             method: 'DELETE',
             headers: {
                 'auth-token': authSession.value.token,

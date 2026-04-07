@@ -22,6 +22,7 @@ const form = ref<RegisterPayload>({
 const loading = ref(false)
 const successMessage = ref('')
 const errorMessage = ref('')
+const API_BASE = (import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '')
 
 async function onSubmit() {
     loading.value = true
@@ -29,7 +30,7 @@ async function onSubmit() {
     errorMessage.value = ''
 
     try {
-        const response = await fetch('http://localhost:4000/api/user/register', {
+        const response = await fetch(`${API_BASE}/api/user/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -59,7 +60,7 @@ async function onSubmit() {
             password: '',
         }
     } catch {
-        errorMessage.value = 'Could not connect to backend. Make sure the API is running on port 4000.'
+        errorMessage.value = 'Could not connect to backend. Check your VITE_API_URL setting.'
     } finally {
         loading.value = false
     }
