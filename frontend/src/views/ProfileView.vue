@@ -27,12 +27,18 @@ type PostCreator = {
   fullName?: string
 }
 
+type PostComment = string | {
+  _id?: string
+  text: string
+  createdBy?: string | PostCreator
+}
+
 type PostItem = {
   _id: string
   name: string
   description: string
   imageUrl: string
-  comments?: string[]
+  comments?: PostComment[]
   _createdBy: string | PostCreator
 }
 
@@ -81,9 +87,24 @@ const userPosts = computed(() =>
 )
 
 const avatarUrl = computed(() => form.value.profileImageUrl || userPosts.value[0]?.imageUrl || '')
-const commentCount = computed(() =>
-  userPosts.value.reduce((total, post) => total + (post.comments?.length ?? 0), 0),
+const userComments = computed(() =>
+  posts.value.flatMap((post) =>
+    (post.comments ?? []).filter((comment) => commentAuthorId(comment) === authSession.value?.userId),
+  ),
 )
+const commentCount = computed(() => userComments.value.length)
+
+function commentAuthorId(comment: PostComment): string | null {
+  if (typeof comment === 'string' || !comment.createdBy) {
+    return null
+  }
+
+  if (typeof comment.createdBy === 'string') {
+    return comment.createdBy
+  }
+
+  return comment.createdBy._id ?? null
+}
 
 function creatorName(post: PostItem): string {
   if (typeof post._createdBy === 'string') {

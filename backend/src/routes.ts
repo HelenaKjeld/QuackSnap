@@ -5,6 +5,8 @@ import {
   getDuckPostById,
   updateDuckPostById,
   deleteDuckPostById,
+  addCommentToDuckPost,
+  deleteCommentFromDuckPost,
   getDuckPostsByQuery,
   getDuckPostsByQueryGeneric,
 } from "./controllers/productController";
@@ -248,6 +250,10 @@ router.delete("/user/me", verifyToken, deleteMyProfile);
 
 router.post("/posts", verifyToken, createDucks);
 
+router.post("/comments/:postId", verifyToken, addCommentToDuckPost);
+
+router.delete("/comments/:postId/:commentId", verifyToken, deleteCommentFromDuckPost);
+
 // gets all
 /**
  * @swagger
@@ -271,17 +277,22 @@ router.post("/posts", verifyToken, createDucks);
  */
 router.get("/posts", getAllDucks);
 
-// get by id
-router.get("/posts/:id", getDuckPostById);
-
 router.post("/posts/query", getDuckPostsByQueryGeneric);
 
-router.post("/posts/:key/:value", getDuckPostsByQuery);
+router.post("/posts/:id/comments", verifyToken, addCommentToDuckPost);
+
+router.delete("/posts/:postId/comments/:commentId", verifyToken, deleteCommentFromDuckPost);
+
+// get by id
+router.get("/posts/:id", getDuckPostById);
 
 // update
 router.put("/posts/:id", verifyToken, updateDuckPostById);
 
+router.post("/posts/:key/:value", getDuckPostsByQuery);
+
 // delete
+
 router.delete("/posts/:id", verifyToken, deleteDuckPostById);
 
 export default router;
