@@ -84,6 +84,10 @@ export default defineConfig({
       command: "npm run start-dev",
       url: "http://localhost:4000/api",
       timeout: 120 * 1000,
+      env: {
+        TOKEN_SECRET: "local-test-secret",
+        FRONTEND_ORIGIN: "http://localhost:5173",
+      },
     },
     {
       cwd: "../frontend",
