@@ -6,6 +6,8 @@ const userSchema = new Schema<User>({
     userName: { type: String, required: true, min: 3, max: 255, unique: true },
     email: { type: String, required: true, min: 6, max: 255, unique: true },
     password: { type: String, required: true, min: 6, max: 255 },
+    bio: { type: String, default: "", max: 280 },
+    profileImageUrl: { type: String, default: "" },
     registerDate: { type: Date, required: true, default: Date.now }
 });
 

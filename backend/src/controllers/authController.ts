@@ -171,7 +171,7 @@ export async function getMyProfile(req: Request, res: Response): Promise<void> {
     await connect();
 
     const user = await UserModel.findById(userId).select(
-      "fullName userName email registerDate",
+      "fullName userName email bio profileImageUrl registerDate",
     );
     if (!user) {
       res.status(404).json({ error: "User not found." });
@@ -242,6 +242,14 @@ export async function updateMyProfile(
       currentUser.fullName = req.body.fullName;
     }
 
+    if (req.body.bio !== undefined) {
+      currentUser.bio = req.body.bio;
+    }
+
+    if (req.body.profileImageUrl !== undefined) {
+      currentUser.profileImageUrl = req.body.profileImageUrl;
+    }
+
     if (req.body.password) {
       const salt = await bcrypt.genSalt(10);
       currentUser.password = await bcrypt.hash(req.body.password, salt);
@@ -256,6 +264,8 @@ export async function updateMyProfile(
         fullName: currentUser.fullName,
         userName: currentUser.userName,
         email: currentUser.email,
+        bio: currentUser.bio,
+        profileImageUrl: currentUser.profileImageUrl,
       },
     });
   } catch (error) {
@@ -338,6 +348,8 @@ export function validateUserProfileUpdate(
     userName: Joi.string().min(3).max(255),
     email: Joi.string().email().min(5).max(255),
     password: Joi.string().min(6).max(30),
+    bio: Joi.string().allow("").max(280),
+    profileImageUrl: Joi.string().allow("").max(2_000_000),
   }).min(1);
 
   return schema.validate(data);

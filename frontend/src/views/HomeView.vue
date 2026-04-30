@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
 import { useAuth } from '@/stores/auth'
 import { compressImage, getCompressionRatio } from '@/utils/imageCompressor'
 
@@ -18,6 +19,7 @@ type PostItem = {
 }
 
 const { isLoggedIn, authSession } = useAuth()
+const route = useRoute()
 const API_BASE = (import.meta.env.VITE_API_URL ?? 'http://localhost:4000').replace(/\/$/, '')
 
 const posts = ref<PostItem[]>([])
@@ -143,6 +145,7 @@ async function onCreatePost() {
 }
 
 onMounted(() => {
+  isCreatePostOpen.value = route.query.createPost === '1'
   void loadPosts()
 })
 </script>

@@ -4,5 +4,7 @@ export interface User extends Document {
     userName: string;
     email: string;
     password: string;
+    bio?: string;
+    profileImageUrl?: string;
     registerDate: Date;
 }
