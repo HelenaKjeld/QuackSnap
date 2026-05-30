@@ -1,10 +1,25 @@
 <script setup lang="ts">
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
 import { useRouter } from 'vue-router'
 import { useAuth } from '@/stores/auth'
 
 const router = useRouter()
 const { isLoggedIn, currentUserName, clearAuthSession } = useAuth()
+const isBooting = ref(true)
+let loadingTimer: ReturnType<typeof setTimeout> | undefined
+
+onMounted(() => {
+  loadingTimer = setTimeout(() => {
+    isBooting.value = false
+  }, 1600)
+})
+
+onBeforeUnmount(() => {
+  if (loadingTimer) {
+    clearTimeout(loadingTimer)
+  }
+})
 
 function onLogout() {
   clearAuthSession()
@@ -13,6 +28,14 @@ function onLogout() {
 </script>
 
 <template>
+  <Transition leave-active-class="transition-opacity duration-500 ease-out" leave-from-class="opacity-100"
+    leave-to-class="opacity-0">
+    <div v-if="isBooting" class="fixed inset-0 z-50 grid place-items-center bg-[#06170e]" role="status"
+      aria-label="Loading QuackSnap">
+      <img class="h-56 w-56 sm:h-64 sm:w-64" src="/floating-swimming-duck.svg" alt="" />
+    </div>
+  </Transition>
+
   <div class="min-h-screen bg-[#06170e] text-zinc-100 antialiased">
     <header class="sticky top-0 z-10 border-b border-white/15 bg-[#030b07]/70 backdrop-blur-md">
       <div class="mx-auto max-w-[1200px] px-4 py-3">
